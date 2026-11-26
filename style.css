@@ -24,6 +24,9 @@ header{
     padding: 1em;
     position: relative;
 }
+header p{
+    text-align: center;
+}
 header::before{
     content: '';
     background-image: url(ball.svg);
