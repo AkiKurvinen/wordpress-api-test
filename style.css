@@ -2,6 +2,9 @@
 *{
     box-sizing: border-box;
 }
+h1{
+    text-align: center;
+}
 body{
     font-family: "Google Sans", sans-serif;
     background-color: antiquewhite;
