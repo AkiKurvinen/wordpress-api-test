@@ -30,3 +30,15 @@ header::before{
     background-size: contain;
     background-repeat: no-repeat;
 }
+main{
+    padding: 1em;
+}
+footer{
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 1em;
+}
+footer a, footer a:visited{
+    color: white;
+}
