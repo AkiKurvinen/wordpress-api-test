@@ -14,24 +14,66 @@
         <footer id="site-footer"></footer>
     </div>
     <script>
-        function renderApp(otsikko){
+        const TESTMODE = false
+        const WPSITENAME = "hobbierecs"
+        const WPSITENUMBER = "246259228"
+
+        const fakeDelay = (ms) => new Promise(resolve => setTimeout(resolve, ms)) 
+        
+        async function fetchJSON(url, delay=0){
+            await fakeDelay(delay)
+            const res = await fetch(url)
+            if(!res.ok) throw new Error(`HTTP ${res.status} for ${url}`)
+            return res.json()
+        }
+        async function loadMeta(){
+            const url = TESTMODE ? 'wp_site.json' : 
+            `https://public-api.wordpress.com/rest/v1/sites/${WPSITENAME}.wordpress.com`
+            try {
+                const meta = await fetchJSON(url, 1000)
+                renderApp(meta)
+            }
+            catch (error){
+                console.error(error)
+                header_elem.innerHTML = "error loading meta"
+            }
+        }
+        async function loadPosts(){
+            const url = TESTMODE ? 'wp_posts.json' :
+            `https://public-api.wordpress.com/rest/v1.1/sites/${WPSITENUMBER}/posts/`
+            try {
+                const postaukset = await fetchJSON(url, 1000)
+                renderPosts(postaukset)
+            }
+            catch (error){
+                console.error(error)
+                main_elem.innerHTML = "error loading posts"
+            }
+        }
+        function renderApp(meta){
             header_elem.innerHTML = `
-              <h1>${otsikko}</h1>
+              <h1>${meta.name}</h1>
+              <p>${meta.description}</p>
             `
             footer_elem.innerHTML = `
-                <a href="Hello">Hello</a>
+                <a href="${meta.URL}" target="_blank">${meta.URL}</a>
             `
         }
         const renderPosts = (postaukset) => {
+            const postauslista = postaukset.posts.filter(post => post.categories.postitem)
+            const lista = postauslista.map(postaus => `<li>${postaus.title}</li>`).join("")
             main_elem.innerHTML = `
-                <ul>${postaukset}</ul>
+                <ul>${lista}</ul>
             `
+        }
+        function main(){
+            loadMeta()
+            loadPosts()
         }
         const header_elem = document.getElementById("site-header")
         const main_elem = document.getElementById("site-main")
         const footer_elem = document.getElementById("site-footer")
-        renderApp("WP API Testaus")
-        renderPosts("postaus")
+        main()
     </script>
 </body>
 </html>
